@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="description" content="Browse the OrientDig spreadsheet with verified CAFANS product links and CNY prices. Compare shoes, hoodies, tees, jackets and bags, then estimate your order total.">
+  <meta name="theme-color" content="#14291e">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OrientDig spreadsheet | CAFANS Finds & Order Cost">
+  <meta property="og:description" content="Filter CAFANS finds and estimate the total cost of an OrientDig order before comparing shipping quotes.">
+  <title>OrientDig spreadsheet | CAFANS Finds & Order Cost</title>
+  <!--
+    Filename: index.html
+    搜索样本包括 https://www.orientdigi.com/、https://www.orientdigs.com/
+    和 https://orientdigglobal.com/，分别覆盖分类与 QC 图、导购与验货、批发与代发。
+    本页以可筛选的 CAFANS 商品明细和同币种订单总价估算补充这些内容。
+    搜索样本未核实为特定地区 Google 首页的固定排名。
+    商品来源：https://cafans.com/agents/orientdig/spreadsheet/
+    Google 与 Bing 尚未提交。正式公开 URL 确定并发布后，添加指向该 URL 的
+    canonical 标签，再在已验证的 Google Search Console 中使用网址检查请求编入索引，
+    并在 Bing Webmaster Tools 中提交该网址。
+    https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl
+    https://www.bing.com/webmasters/help/URL-Submission-62f2860b
+  -->
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f4eb;
+      --ink: #14291e;
+      --muted: #4c5f52;
+      --line: #ccd4c8;
+      --accent: #d7f479;
+      --white: #fff;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); line-height: 1.6; }
+    a { color: inherit; text-underline-offset: .2em; }
+    a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+      outline: 3px solid #608137;
+      outline-offset: 4px;
+    }
+    h1, h2, p { margin-top: 0; }
+    h1, h2 { font-family: "DM Serif Text", Georgia, serif; font-weight: 400; line-height: 1.06; }
+    h1 { font-size: clamp(3rem, 9vw, 7rem); letter-spacing: -.055em; margin-bottom: 1.15rem; }
+    h2 { font-size: clamp(2rem, 4vw, 3.3rem); letter-spacing: -.035em; margin-bottom: .75rem; }
+    .wrap { width: min(100% - 2rem, 70rem); margin-inline: auto; }
+    .skip { position: absolute; top: .5rem; left: .5rem; padding: .5rem 1rem; background: var(--white); transform: translateY(-200%); }
+    .skip:focus { transform: none; }
+    .hero { text-align: center; background: var(--ink); color: var(--white); padding: clamp(3rem, 9vw, 7rem) 0; }
+    .hero p { max-width: 39rem; margin: 0 auto 1.6rem; color: #e0eadf; font-size: 1.075rem; }
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; }
+    .button { display: inline-block; padding: .76rem 1.2rem; border: 1px solid var(--accent); border-radius: 2rem; font-weight: 750; text-decoration: none; }
+    .button-primary { color: var(--ink); background: var(--accent); }
+    .hero .button:focus-visible { outline-color: var(--accent); }
+    main > section { padding-block: clamp(2.25rem, 6vw, 4.5rem); border-bottom: 1px solid var(--line); }
+    .intro { color: var(--muted); max-width: 47rem; }
+    .filters, .cost-inputs { display: grid; gap: .8rem; margin: 1.25rem 0; }
+    .filters:not([hidden]) { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+    .cost-inputs { grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); }
+    label { display: grid; gap: .3rem; align-content: start; font-weight: 650; }
+    input, select { min-width: 0; width: 100%; min-height: 2.8rem; padding: .55rem .65rem; border: 1px solid #869789; border-radius: .45rem; background: var(--white); color: var(--ink); font: inherit; }
+    .table-box { overflow-x: auto; background: var(--white); border: 1px solid var(--line); border-radius: .7rem; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    caption { text-align: left; padding: .85rem 1rem; font-weight: 750; }
+    th, td { padding: .75rem 1rem; border-top: 1px solid var(--line); vertical-align: top; }
+    thead { background: #e7eddf; }
+    tbody th { font-weight: 650; }
+    td:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .guide { display: grid; gap: 1.25rem 2rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+    .guide h3 { margin: 0 0 .4rem; }
+    .guide p { margin-bottom: 0; }
+    .calculator { padding: clamp(1rem, 4vw, 2rem); background: #e7eddf; border-radius: .8rem; }
+    output { display: block; font-size: 1.3rem; font-weight: 750; }
+    details { border-top: 1px solid var(--line); padding: .9rem 0; }
+    details p { margin: .5rem 0 0; max-width: 48rem; }
+    summary { cursor: pointer; font-weight: 700; }
+    footer { text-align: center; padding: 1.5rem 0; color: var(--muted); }
+    [hidden] { display: none !important; }
+
+    @media (max-width: 38rem) {
+      .filters:not([hidden]) { grid-template-columns: 1fr; }
+      th, td { padding: .65rem .5rem; }
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "OrientDig spreadsheet",
+      "inLanguage": "en",
+      "description": "An independent OrientDig shopping guide with CAFANS product links, reference prices in CNY and an order cost calculator."
+    }
+  </script>
+<link rel="canonical" href="https://kakobuyfinds.github.io/cxbvf/">
+</head>
+<body>
+  <a class="skip" href="#catalog">Skip to product directory</a>
+  <header class="hero">
+    <div class="wrap">
+      <h1>OrientDig spreadsheet</h1>
+      <p>Compare shoes, hoodies, tees, jackets and bags from the CAFANS directory. Check the exact variant, then work out the full order cost before you buy.</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://cafans.com">OrientDig spreadsheet</a>
+        <a class="button" href="https://cafans.com">Buy it now</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section aria-labelledby="ordering-title">
+      <h2 id="ordering-title">From product link to parcel</h2>
+      <div class="guide">
+        <article>
+          <h3>1. Check the listing and variant</h3>
+          <p>Open the CAFANS product page and locate the original seller link. Check whether OrientDig accepts it. Record the exact size, color and quantity before comparing prices.</p>
+        </article>
+        <article>
+          <h3>2. Review the item at the warehouse</h3>
+          <p>If warehouse QC photos are available, compare the item label and color with your order. For clothing, check a photographed measurement against a garment you already own. Check the return deadline if anything differs.</p>
+        </article>
+        <article>
+          <h3>3. Compare quotes for the same parcel</h3>
+          <p>Use the same destination, packed dimensions and weight for each quote. Check billable weight, insurance, and whether duties or taxes are included before comparing totals.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="catalog" aria-labelledby="catalog-title">
+      <h2 id="catalog-title">CAFANS product directory</h2>
+      <p class="intro">These nine listings come from the <a href="https://cafans.com/agents/orientdig/spreadsheet/">CAFANS OrientDig directory</a>. Reference prices are in Chinese yuan (CNY) and reflect its <time datetime="2026-11-14">November 14, 2026</time> snapshot. Check the live listing for current pricing and availability.</p>
+      <div class="filters" id="filters" hidden>
+        <label for="product-search">Search by product name
+          <input id="product-search" type="search" placeholder="Try hoodie or jacket">
+        </label>
+        <label for="category">Category
+          <select id="category">
+            <option value="">All categories</option>
+            <option value="Shoes">Shoes</option>
+            <option value="Hoodies &amp; sweaters">Hoodies &amp; sweaters</option>
+            <option value="T-shirts">T-shirts</option>
+            <option value="Jackets">Jackets</option>
+            <option value="Bags">Bags</option>
+          </select>
+        </label>
+      </div>
+      <div class="table-box">
+        <table>
+          <caption id="product-count" aria-live="polite">9 products</caption>
+          <thead>
+            <tr><th scope="col">Product</th><th scope="col">Category</th><th scope="col">CNY</th></tr>
+          </thead>
+          <tbody id="products">
+            <tr><th scope="row"><a href="https://cafans.com/goods-136280.html">Jacket ZMR16 Jacket</a></th><td>Jackets</td><td>153.60</td></tr>
+            <tr><th scope="row"><a href="https://cafans.com/goods-135681.html">Casual Shoes</a></th><td>Shoes</td><td>275.00</td></tr>
+            <tr><th scope="row"><a href="https://cafans.com/goods-138327.html">S Hoodie L</a></th><td>Hoodies &amp; sweaters</td><td>130.80</td></tr>
+            <tr><th scope="row"><a href="https://cafans.com/goods-137681.html">Printed Short-Sleeve T-Shirt 3</a></th><td>T-shirts</td><td>81.60</td></tr>
+            <tr><th scope="row"><a href="https://cafans.com/goods-136469.html">Lf Bag Collection</a></th><td>Bags</td><td>486.00</td></tr>
+            <tr><th scope="row"><a href="https://cafans.com/goods-138106.html">Hooded Sports Shell Jacket 0210</a></th><td>Jackets</td><td>237.60</td></tr>
+            <tr><th scope="row"><a href="https://cafans.com/goods-136110.html">CL Casual Shoes</a></th><td>Shoes</td><td>480.00</td></tr>
+            <tr><th scope="row"><a href="https://cafans.com/goods-136254.html">Pony-Detail Sweatshirt</a></th><td>Hoodies &amp; sweaters</td><td>99.00</td></tr>
+            <tr><th scope="row"><a href="https://cafans.com/goods-137667.html">T-Shirt BR105-119 T-Shirt</a></th><td>T-shirts</td><td>175.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="no-results" hidden>No matching products. Try a shorter search or choose all categories.</p>
+    </section>
+
+    <section aria-labelledby="cost-title">
+      <div class="calculator">
+        <h2 id="cost-title">Estimate your order total</h2>
+        <p class="intro" id="cost-help">Enter each amount in CNY. Include domestic delivery, handling or insurance under other fees when your quote charges them separately. Add duties and taxes only when they are separate from the shipping quote.</p>
+        <div id="cost-controls" hidden>
+          <div class="cost-inputs" aria-describedby="cost-help">
+            <label for="items">Items subtotal
+              <input id="items" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+            </label>
+            <label for="shipping">International shipping
+              <input id="shipping" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+            </label>
+            <label for="fees">Other fees
+              <input id="fees" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+            </label>
+            <label for="taxes">Duties and taxes
+              <input id="taxes" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+            </label>
+          </div>
+          <output id="total" for="items shipping fees taxes" aria-live="polite">Enter an amount to estimate your total.</output>
+        </div>
+        <noscript><p>Add the items subtotal, international shipping, other fees, and any separately charged duties and taxes.</p></noscript>
+      </div>
+    </section>
+
+    <section aria-labelledby="faq-title">
+      <h2 id="faq-title">OrientDig spreadsheet FAQ</h2>
+      <details>
+        <summary>What is an OrientDig spreadsheet?</summary>
+        <p>It is a shopping directory you can use to shortlist products, find seller links, and compare variants and reference prices before placing an order through OrientDig.</p>
+      </details>
+      <details>
+        <summary>Why is the checkout price different from the directory price?</summary>
+        <p>The directory shows a snapshot of the item price. Your selected size or color can change the price. Agent fees, shipping, taxes and currency conversion can also affect the amount you pay.</p>
+      </details>
+      <details>
+        <summary>What if the agent cannot use a product link?</summary>
+        <p>Check that you copied the original seller listing from the product details. If the agent still declines the link, check the reason with its support team and choose another listing if needed.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">Independent shopping guide. Product listings supplied by <a href="https://cafans.com">CAFANS</a>.</div>
+  </footer>
+
+  <script>
+    const search = document.getElementById("product-search");
+    const category = document.getElementById("category");
+    const rows = Array.from(document.querySelectorAll("#products tr"));
+    const productCount = document.getElementById("product-count");
+    const noResults = document.getElementById("no-results");
+
+    function filterProducts() {
+      const terms = search.value.trim().toLowerCase().split(/\s+/);
+      let visible = 0;
+
+      for (const row of rows) {
+        const name = row.cells[0].textContent.toLowerCase();
+        const matchesName = terms.every(term => name.includes(term));
+        const matchesCategory = category.value === "" || row.cells[1].textContent === category.value;
+        row.hidden = !(matchesName && matchesCategory);
+        if (!row.hidden) visible += 1;
+      }
+
+      productCount.textContent = `${visible} ${visible === 1 ? "product" : "products"}`;
+      noResults.hidden = visible !== 0;
+    }
+
+    search.addEventListener("input", filterProducts);
+    category.addEventListener("change", filterProducts);
+    document.getElementById("filters").hidden = false;
+
+    const costControls = document.getElementById("cost-controls");
+    const costFields = Array.from(costControls.querySelectorAll("input"));
+    const total = document.getElementById("total");
+    const currency = new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: "CNY",
+      currencyDisplay: "code"
+    });
+
+    function updateTotal() {
+      if (costFields.some(field => !field.validity.valid)) {
+        total.textContent = "Enter non-negative amounts with up to two decimal places.";
+        return;
+      }
+
+      if (costFields.every(field => field.value === "")) {
+        total.textContent = "Enter an amount to estimate your total.";
+        return;
+      }
+
+      const cents = costFields.reduce(
+        (sum, field) => sum + Math.round(Number(field.value) * 100), 0
+      );
+      total.textContent = Number.isSafeInteger(cents)
+        ? `Estimated total · ${currency.format(cents / 100)}`
+        : "The amount is too large to calculate.";
+    }
+
+    costControls.addEventListener("input", updateTotal);
+    costControls.hidden = false;
+  </script>
+</body>
+</html>
